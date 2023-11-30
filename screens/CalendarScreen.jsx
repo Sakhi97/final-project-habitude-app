@@ -5,6 +5,7 @@ import { getDatabase, ref, onValue } from 'firebase/database';
 import { getAuth } from 'firebase/auth';
 import { Calendar } from 'react-native-calendars';
 import { ProgressChart } from 'react-native-chart-kit';
+import { styles } from '../styling/styles';
 
 export default function CalendarScreen() {
     const auth = getAuth();
@@ -103,7 +104,7 @@ export default function CalendarScreen() {
 
 
     return (
-        <View style={styles.container}>
+        <View style={styles.screen_container}>
             <Calendar
                 markedDates={markedDates}
                 markingType={'multi-dot'}
@@ -144,43 +145,3 @@ export default function CalendarScreen() {
     );
 }
 
-const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: '#f4f4f4', // Light background color
-    },
-    dropdown: {
-        height: 50,
-        width: '95%',
-        marginBottom: 15,
-        marginTop: 15,
-        alignSelf: 'center',
-        borderRadius: 10, // Rounded corners
-        backgroundColor: '#e6e6e6', // Light gray background
-    },
-    dropdownContainer: {
-        width: '90%',
-        alignSelf: 'center',
-    },
-    completionText: {
-      fontSize: 18,
-      marginTop: 2,
-      alignSelf: 'center',
-      color: '#333', // Darker text color for contrast
-    },
-    chartContainer: {
-      alignItems: 'center',
-      marginTop: 30,
-    },
-
-    calendarContainer: {
-        alignSelf: 'center',
-        width: '95%',
-        borderRadius: 10, // Rounded corners like the dropdown
-        borderWidth: 1, // Add border
-        borderColor: '#d3d3d3', // Light grey border color
-        marginTop: 15,
-        overflow: 'hidden' // This is important to make the rounded corners visible
-    },
-  });
-  

@@ -6,6 +6,8 @@ import { getAuth } from 'firebase/auth';
 import CalendarStrip from 'react-native-calendar-strip';
 import * as Notifications from 'expo-notifications';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import QuoteCard from '../components/home/QuoteCard';
+import { styles } from '../styling/styles';
 
 
 export default function HomeScreen() {
@@ -14,29 +16,13 @@ export default function HomeScreen() {
     const [habits, setHabits] = useState([]);
     const [selectedHabitIndex, setSelectedHabitIndex] = useState(null);
     const [selectedDate, setSelectedDate] = useState(todayStr);
-    const [quote, setQuote] = useState('');
-    const [author, setAuthor] = useState('');
 
     const handleDayPress = (date) => {
         const newDateStr = date.format('YYYY-MM-DD');
         console.log('selected day', newDateStr);
         setSelectedDate(newDateStr);
     };
-    const fetchQuote = async () => {
-        try {
-            const response = await fetch('https://api.quotable.io/quotes/random');
-            const data = await response.json();
-            
-            if (data && data.length > 0) {
-                setQuote(data[0].content);
-                setAuthor(data[0].author);
-            } else {
-                console.log('No quotes found in the response');
-            }
-        } catch (error) {
-            console.error('Error fetching quote:', error);
-        }
-    };
+    
     
 
     useEffect(() => {
@@ -47,7 +33,6 @@ export default function HomeScreen() {
     
         requestNotificationsPermission();
 
-        fetchQuote();
         const db = getDatabase();
         const habitsRef = ref(db, `habits/${auth.currentUser.uid}`);
         onValue(habitsRef, (snapshot) => {
@@ -85,8 +70,6 @@ export default function HomeScreen() {
     };
 
 
-
-
     const handleDeleteHabit = (habitKey) => {
         const db = getDatabase();
         const habitRef = ref(db, 'habits/' + auth.currentUser.uid + '/' + habitKey);
@@ -99,7 +82,6 @@ export default function HomeScreen() {
     };
     
 
-    
 
     const handleMarkDone = (index) => {
         const habitToUpdate = habits[index];
@@ -146,7 +128,7 @@ export default function HomeScreen() {
 
     return (
         <TouchableWithoutFeedback onPress={() => setSelectedHabitIndex(null)}>
-            <View style={{ flex: 1, backgroundColor: '#f4f4f4' }}> 
+            <View style={styles.screen_container}> 
                 <CalendarStrip
                     onDateSelected={handleDayPress}
                     scrollable
@@ -166,14 +148,7 @@ export default function HomeScreen() {
                     disabledDateNumberStyle={{ color: 'grey' }}
                     iconContainer={{ flex: 0.1 }}
                 />
-                <Card >
-                    <Card.Title>Quote Of The Day</Card.Title>
-                    <Card.Divider />
-                    <Text>{quote}</Text>
-                    <Text style={{ alignSelf: 'flex-end', marginTop: 10, fontStyle: 'italic' }}>
-                        - {author}
-                    </Text>
-                </Card>
+                <QuoteCard />
                 <Text style={{ padding: 10, fontSize: 18, fontWeight: 'bold', alignSelf: 'center'}}>
                     Habits for {formatDateForDisplay(selectedDate)}
                 </Text>

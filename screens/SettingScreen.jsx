@@ -7,6 +7,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { scheduleNotification, cancelAllNotifications } from '../services/notification';
 import { useNavigation } from '@react-navigation/native';
+import { styles } from '../styling/styles';
 
 export default function SettingScreen() {
     const auth = getAuth();
@@ -75,10 +76,10 @@ export default function SettingScreen() {
     const toggleDarkMode = () => setIsDarkMode(previousState => !previousState);
 
     return (
-        <View style={customStyles.container}>
-            <View style={customStyles.nameContainer}>
-                <Text style={customStyles.nameText}>{name}</Text>
-                <TouchableOpacity onPress={() => setEditMode(!editMode)} style={customStyles.iconContainer}>
+        <View style={styles.setting_container}>
+            <View style={styles.nameContainer}>
+                <Text style={styles.setting_nameText}>{name}</Text>
+                <TouchableOpacity onPress={() => setEditMode(!editMode)} style={styles.iconContainer}>
                     <Icon name="pencil" size={17} />
                 </TouchableOpacity>
             </View>
@@ -87,7 +88,7 @@ export default function SettingScreen() {
             {editMode && (
                 <View>
                     <Input
-                        style={customStyles.input}
+                        style={styles.input}
                         onChangeText={text => setEditedName(text)}
                         value={editedName}
                         placeholder="Enter new name"
@@ -100,13 +101,13 @@ export default function SettingScreen() {
             <OptionRow label="Dark Mode" value={isDarkMode} onToggle={toggleDarkMode} />
             <OptionRow label="Notification" value={notificationsEnabled} onToggle={handleNotificationSwitch} />
            
-            <View style={customStyles.signOutContainer}>
+            <View style={styles.signOutContainer}>
                 <Button 
                     title="Sign Out" 
                     onPress={handleSignOut}
-                    buttonStyle={customStyles.buttonStyle}
-                    containerStyle={customStyles.containerStyle}
-                    titleStyle={customStyles.buttonText}
+                    buttonStyle={styles.setting_buttonStyle}
+                    containerStyle={styles.containerStyle}
+                    titleStyle={styles.buttonText}
                 />
             </View>
         </View>
@@ -114,64 +115,9 @@ export default function SettingScreen() {
 };
 
 const OptionRow = ({ label, value, onToggle }) => (
-    <View style={customStyles.optionContainer}>
-        <Text style={customStyles.optionText}>{label}</Text>
+    <View style={styles.optionContainer}>
+        <Text style={styles.optionText}>{label}</Text>
         <Switch onValueChange={onToggle} value={value} />
     </View>
 );
 
-const customStyles = StyleSheet.create({
-    buttonStyle: {
-        borderWidth: 2,
-        borderColor: 'white',
-        borderRadius: 30,
-        backgroundColor: '#C70039'
-    },
-    containerStyle: {
-        width: 200,
-        marginHorizontal: 50,
-        marginVertical: 10,
-    },
-    buttonText: {
-        fontWeight: 'bold',
-        color: 'white',
-    },
-
-    container: {
-        flex: 1,
-        padding: 10,
-        paddingTop: 30, // Adjust as needed for the top spacing
-    },
-    nameText: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 20, // Space below the name
-    },
-    input: {
-        // Styles for your input if needed
-    },
-    optionContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 10,
-    },
-    optionText: {
-        
-    },
-    nameContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 20, // Adjust as needed
-    },
-    iconContainer: {
-        marginLeft: 5, // Adjust as needed
-        marginBottom: 25
-    },
-    signOutContainer: {
-        flex: 1,
-        justifyContent: 'flex-end',
-        alignItems: 'center',
-        marginBottom: 30, // Adjust as needed for bottom spacing
-    },
-});

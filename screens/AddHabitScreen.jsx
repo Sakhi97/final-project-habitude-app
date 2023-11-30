@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, Switch, addHabitStylesheet } from 'react-native';
+import { View, Text, Switch, stylesheet } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { getDatabase, ref, set } from 'firebase/database';
 import { getAuth } from 'firebase/auth';
 import { Button, Input } from 'react-native-elements';
-import { addHabitStyles } from '../styling/styles';
 import { styles } from '../styling/styles';
 
 export default function AddHabitScreen({ navigation }) {
@@ -71,44 +70,44 @@ export default function AddHabitScreen({ navigation }) {
     };
 
     return (
-        <View style={addHabitStyles.container}>
+        <View style={styles.screen_container}>
             <Input
                 placeholder="Habit"
                 value={habit}
                 onChangeText={setHabit}
-                style={addHabitStyles.input}
+                style={styles.addhabit_input}
             />
             <Input
                 placeholder="Description"
                 value={description}
                 onChangeText={setDescription}
-                style={addHabitStyles.input}
+                style={styles.addhabit_input}
             />
-            <View style={addHabitStyles.switchRow}>
+            <View style={styles.switchRow}>
                 <Switch
                     value={useDates}
                     onValueChange={setUseDates}
                 />
-                <Text style={addHabitStyles.switchText}>Use Start and End Dates</Text>
+                <Text style={styles.switchText}>Use Start and End Dates</Text>
             </View>
 
             {useDates ? (
-            <View style={addHabitStyles.datePickerRow}>
-                <Text style={addHabitStyles.datePickerLabel}>Start</Text>
+            <View style={styles.datePickerRow}>
+                <Text style={styles.datePickerLabel}>Start</Text>
                 <DateTimePicker
                     value={startDate}
                     mode='date'
                     display='default'
                     onChange={(event, date) => setStartDate(date)}
-                    style={addHabitStyles.datePicker}
+                    style={styles.datePicker}
                 />
-                <Text style={addHabitStyles.datePickerLabel}>End</Text>
+                <Text style={styles.datePickerLabel}>End</Text>
                 <DateTimePicker
                     value={endDate}
                     mode='date'
                     display='default'
                     onChange={(event, date) => setEndDate(date)}
-                    style={addHabitStyles.datePicker}
+                    style={styles.datePicker}
                 />
             </View>
             ) : (
@@ -121,8 +120,8 @@ export default function AddHabitScreen({ navigation }) {
                         setValue={setTimePeriod}
                         setItems={setItems}
                         listMode="SCROLLVIEW"
-                        style={addHabitStyles.dropdown}
-                        dropDownContainerStyle={addHabitStyles.dropdownContainer}
+                        style={styles.dropdown}
+                        dropDownContainerStyle={styles.dropdownContainer}
                     />
 
                     <Input
@@ -130,7 +129,7 @@ export default function AddHabitScreen({ navigation }) {
                         value={duration}
                         onChangeText={setDuration}
                         keyboardType="numeric"
-                        style={addHabitStyles.input}
+                        style={styles.addhabit_input}
                     />
                 </>
             )}
@@ -140,7 +139,7 @@ export default function AddHabitScreen({ navigation }) {
                         title="Add Habit"
                         onPress={handleAddHabit}
                         buttonStyle={styles.buttonStyle}
-                        titleStyle={styles.buttonText}
+                        titleStyle={styles.addhabit_buttonText}
                     />
                 </View>
 

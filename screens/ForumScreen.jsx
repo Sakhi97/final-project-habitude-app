@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, FlatList, Text, TouchableOpacity } from 'react-native';
 import { Button, Card, Icon, Input } from 'react-native-elements';
 import { getDatabase, ref, push, onValue, update, get } from 'firebase/database';
-import { forumStyles, styles } from '../styling/styles';
+import { styles } from '../styling/styles';
 
 export default function ForumScreen() {
     const [stories, setStories] = useState([]);
@@ -121,12 +121,12 @@ export default function ForumScreen() {
     };
 
     return (
-        <View style={forumStyles.container}>
+        <View style={styles.screen_container}>
             <Input
                 placeholder="Search stories..."
                 value={searchQuery}
                 onChangeText={setSearchQuery}
-                style={forumStyles.input}
+                style={styles.screen_input}
             />
 
             <View style={styles.centeredButtonContainer}>
@@ -145,13 +145,13 @@ export default function ForumScreen() {
                         placeholder="Headline"
                         value={newHeadline}
                         onChangeText={setNewHeadline}
-                        style={forumStyles.input}
+                        style={styles.forum_input}
                     />
                     <Input
                         placeholder="Share your story..."
                         value={newStory}
                         onChangeText={setNewStory}
-                        style={forumStyles.input}
+                        style={styles.forum_input}
                         multiline
                     />
                     <View style={styles.centeredButtonContainer}>
