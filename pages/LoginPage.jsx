@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, TouchableOpacity, Text } from 'react-native';
-import { styles } from '../styling/styles'
 import { Button, Input } from 'react-native-elements';
 import { initializeApp } from 'firebase/app';
 import { initializeAuth, getReactNativePersistence, signInWithEmailAndPassword } from 'firebase/auth';
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import firebaseConfig from '../configs/firebaseConfig';
+import { ThemeContext } from '../styling/ThemeContext';
+import { lightThemeStyles, darkThemeStyles } from '../styling/styles';
+
+
 
 const app = initializeApp(firebaseConfig);
 const auth = initializeAuth(app, {
@@ -17,6 +20,8 @@ export default function LoginPage() {
     const navigation = useNavigation();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const { theme } = useContext(ThemeContext);
+    const styles = theme === 'dark' ? darkThemeStyles : lightThemeStyles;
 
     const handleLogin = () => {
         signInWithEmailAndPassword(auth, email, password)
@@ -72,11 +77,11 @@ export default function LoginPage() {
             </View>
             <View style={styles.linkContainer}>
                 <TouchableOpacity onPress={handleForgotPasswordNavigation}>
-                    <Text style={styles.forgotPasswordText}>Forgot Password</Text>
+                    <Text style={styles.linkText}>Forgot Password</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={handleRegisterNavigation}>
-                    <Text style={styles.registerText}>Register</Text>
+                    <Text style={styles.linkText}>Register</Text>
                 </TouchableOpacity>
             </View>
         </View>

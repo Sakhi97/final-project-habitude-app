@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext} from 'react'; 
 import { View, Text, TouchableWithoutFeedback  } from 'react-native';
 import { Icon, Button, Card } from 'react-native-elements';
 import { getDatabase, ref, onValue, remove,update } from 'firebase/database';
@@ -7,10 +7,12 @@ import CalendarStrip from 'react-native-calendar-strip';
 import * as Notifications from 'expo-notifications';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import QuoteCard from '../components/home/QuoteCard';
-import { styles } from '../styling/styles';
-
+import { ThemeContext } from '../styling/ThemeContext';
+import { lightThemeStyles, darkThemeStyles } from '../styling/styles';
 
 export default function HomeScreen() {
+    const { theme } = useContext(ThemeContext);
+    const styles = theme === 'dark' ? darkThemeStyles : lightThemeStyles;
     const auth = getAuth();
     const todayStr = new Date().toISOString().split('T')[0];
     const [habits, setHabits] = useState([]);
@@ -123,7 +125,9 @@ export default function HomeScreen() {
             console.error('Error updating habit: ', error);
         });
     };
-    
+    console.log("Current theme:", theme);
+   
+
  
 
     return (

@@ -1,13 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext} from 'react';
 import { View, FlatList, Text, TouchableOpacity } from 'react-native';
 import { Button, Card, Icon, Input } from 'react-native-elements';
 import { getDatabase, ref, push, onValue, update, get } from 'firebase/database';
-import { styles } from '../styling/styles';
+import { ThemeContext } from '../styling/ThemeContext';
+import { lightThemeStyles, darkThemeStyles } from '../styling/styles';
 
 export default function ForumScreen() {
+    const { theme } = useContext(ThemeContext);
+    const styles = theme === 'dark' ? darkThemeStyles : lightThemeStyles;
     const [stories, setStories] = useState([]);
     const [filteredStories, setFilteredStories] = useState([]);
-    const [expandedStoryId, setExpandedStoryId] = useState(null); // New state
+    const [expandedStoryId, setExpandedStoryId] = useState(null); 
     const [newStory, setNewStory] = useState('');
     const [newHeadline, setNewHeadline] = useState('');
     const [searchQuery, setSearchQuery] = useState('');

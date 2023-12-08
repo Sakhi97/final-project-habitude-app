@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, Alert } from 'react-native';
-import { styles } from '../styling/styles'
 import { Button, Input } from 'react-native-elements';
 import { getAuth, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { getDatabase, ref, set } from 'firebase/database';
+import { ThemeContext } from '../styling/ThemeContext';
+import { lightThemeStyles, darkThemeStyles } from '../styling/styles';
+
 
 export default function RegisterPage({ navigation }) {
+    const { theme } = useContext(ThemeContext);
+    const styles = theme === 'dark' ? darkThemeStyles : lightThemeStyles;
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');

@@ -1,14 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useState, useEffect, useContext } from 'react';
+import { View, Text } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { getDatabase, ref, onValue } from 'firebase/database';
 import { getAuth } from 'firebase/auth';
 import { Calendar } from 'react-native-calendars';
 import { ProgressChart } from 'react-native-chart-kit';
-import { styles } from '../styling/styles';
+import { ThemeContext } from '../styling/ThemeContext';
+import { lightThemeStyles, darkThemeStyles } from '../styling/styles';
 
 export default function CalendarScreen() {
     const auth = getAuth();
+    const { theme } = useContext(ThemeContext);
+    const styles = theme === 'dark' ? darkThemeStyles : lightThemeStyles;
     const [habits, setHabits] = useState({});
     const [markedDates, setMarkedDates] = useState({});
     const [selectedHabit, setSelectedHabit] = useState(null);

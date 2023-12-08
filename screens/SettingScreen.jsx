@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, TouchableOpacity, Alert, Switch, StyleSheet } from 'react-native';
 import { Button, Input } from 'react-native-elements';
 import { getAuth, updateProfile, signOut } from 'firebase/auth';
@@ -7,11 +7,17 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { scheduleNotification, cancelAllNotifications } from '../services/notification';
 import { useNavigation } from '@react-navigation/native';
-import { styles } from '../styling/styles';
+import { ThemeContext } from '../styling/ThemeContext';
+import { lightThemeStyles, darkThemeStyles } from '../styling/styles';
+
+
 
 export default function SettingScreen() {
     const auth = getAuth();
     const user = auth.currentUser;
+    const { theme } = useContext(ThemeContext);
+    const styles = theme === 'dark' ? darkThemeStyles : lightThemeStyles;
+    const { toggleTheme } = useContext(ThemeContext);
     const navigation = useNavigation();
     const [name, setName] = useState(user?.displayName || 'No Name');
     const [editMode, setEditMode] = useState(false);
@@ -98,7 +104,7 @@ export default function SettingScreen() {
                 </View>
             )}
 
-            <OptionRow label="Dark Mode" value={isDarkMode} onToggle={toggleDarkMode} />
+            <OptionRow label="Dark Mode" value={isDarkMode} onToggle={toggleTheme} />
             <OptionRow label="Notification" value={notificationsEnabled} onToggle={handleNotificationSwitch} />
            
             <View style={styles.signOutContainer}>

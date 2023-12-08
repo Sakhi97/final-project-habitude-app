@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
-import { View, Text, Switch, stylesheet } from 'react-native';
+import React, { useState, useContext } from 'react';
+import { View, Text, Switch} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { getDatabase, ref, set } from 'firebase/database';
 import { getAuth } from 'firebase/auth';
 import { Button, Input } from 'react-native-elements';
-import { styles } from '../styling/styles';
+import { ThemeContext } from '../styling/ThemeContext';
+import { lightThemeStyles, darkThemeStyles } from '../styling/styles';
 
 export default function AddHabitScreen({ navigation }) {
+    const { theme } = useContext(ThemeContext);
+    const styles = theme === 'dark' ? darkThemeStyles : lightThemeStyles;
     const [habit, setHabit] = useState('');
     const [description, setDescription] = useState('');
     const [timePeriod, setTimePeriod] = useState('daily');
@@ -139,7 +142,7 @@ export default function AddHabitScreen({ navigation }) {
                         title="Add Habit"
                         onPress={handleAddHabit}
                         buttonStyle={styles.buttonStyle}
-                        titleStyle={styles.addhabit_buttonText}
+                        titleStyle={styles.buttonText}
                     />
                 </View>
 

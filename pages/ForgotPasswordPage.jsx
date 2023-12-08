@@ -1,12 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, Alert } from 'react-native';
-import { styles } from '../styling/styles'; // Ensure this path is correct
 import { Input, Button } from 'react-native-elements';
 import { getAuth, sendPasswordResetEmail } from 'firebase/auth';
+import { ThemeContext } from '../styling/ThemeContext';
+import { lightThemeStyles, darkThemeStyles } from '../styling/styles';
 
 export default function ForgotPasswordPage({ navigation }) {
     const [email, setEmail] = useState('');
     const auth = getAuth();
+
+    const { theme } = useContext(ThemeContext);
+    const styles = theme === 'dark' ? darkThemeStyles : lightThemeStyles;
 
     const handleSendResetEmail = () => {
         sendPasswordResetEmail(auth, email)
