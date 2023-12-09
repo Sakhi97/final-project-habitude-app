@@ -27,11 +27,24 @@ const fetchQuote = async () => {
     }
 };
     return (
-        <Card>
-            <Card.Title>Quote Of The Day</Card.Title>
-            <Card.Divider />
+        <Card containerStyle={{
+            backgroundColor: '#e0e0eb',
+            borderRadius: 20,
+            borderColor: 'grey',
+            width: '95%', 
+            alignSelf: 'center', 
+        }}>
+            <Card.Title style={{ 
+                color: 'black', 
+            }} 
+            >Quote Of The Day</Card.Title>
+            <Card.Divider color='black'/>
             <Text>{quote}</Text>
-            <Text style={{ alignSelf: 'flex-end', marginTop: 10, fontStyle: 'italic' }}>
+            <Text style={{ 
+                alignSelf: 'flex-end', 
+                marginTop: 10, 
+                fontStyle: 'italic', 
+                }}>
                 - {author}
             </Text>
         </Card>
