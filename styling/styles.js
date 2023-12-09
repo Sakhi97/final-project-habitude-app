@@ -2,20 +2,22 @@ import { StyleSheet } from 'react-native';
 
 
 export const darkTheme = {
-    background: '#121212',
+    background: '#303030',
     text: '#FFFFFF',
-    borderColor: '#444444',
+    borderColor: '#909090',
     linkText: '#BBBBBB',
-    buttonBackground: '#900C3F',
+    buttonBackground: '#FF6633',
+    signOutButtonBackground: '#900C3F',
     dropdownBackground: '#333333',
     chartBorder: '#555555',
 };
 export const lightTheme = {
-    background: '#FFFFFF',
+    background: '#f4f4f4',
     text: '#000000',
-    borderColor: 'gray',
+    borderColor: 'grey',
     linkText: 'grey',
-    buttonBackground: '#C70039',
+    buttonBackground:'#3399CC',
+    signOutButtonBackground: '#C70039',
     dropdownBackground: '#e6e6e6',
     chartBorder: '#d3d3d3',
 };
@@ -28,6 +30,9 @@ const createStyles = (colors) => StyleSheet.create({
         paddingHorizontal: 15,
         backgroundColor: colors.background,
     },
+    containerTab: {
+        backgroundColor: colors.background,
+    },
     screen_container: {
         flex: 1,
         padding: 10,
@@ -38,6 +43,13 @@ const createStyles = (colors) => StyleSheet.create({
         borderColor: colors.borderColor,
         marginBottom: 10,
         padding: 8,
+        color: colors.text,
+    },
+    dateText: {
+        padding: 10, 
+        fontSize: 18, 
+        fontWeight: 'bold', 
+        alignSelf: 'center',
         color: colors.text,
     },
     headline: {
@@ -72,6 +84,12 @@ const createStyles = (colors) => StyleSheet.create({
         backgroundColor: colors.buttonBackground,
     },
 
+    stripeCalendarStyle: { 
+        height: 100, 
+        paddingTop: 20, 
+        paddingBottom: 10,
+        backgroundColor: colors.background
+    },
     containerStyle: {
         width: 200,
         marginHorizontal: 50,
@@ -79,7 +97,7 @@ const createStyles = (colors) => StyleSheet.create({
     },
     buttonText: {
         fontWeight: 'bold',
-        color: colors.text, 
+        color: 'white', 
     },
     linkContainer: {
         flexDirection: 'row',
@@ -138,6 +156,7 @@ const createStyles = (colors) => StyleSheet.create({
     },
     switchText: {
         marginLeft: 10,
+        color: colors.text
     },
 
     datePickerRow: {
@@ -148,12 +167,14 @@ const createStyles = (colors) => StyleSheet.create({
     },
     datePicker: {
         flex: 1,
-        marginHorizontal: 5, 
+        marginHorizontal: 5,
+        color: colors.text,
     },
     datePickerLabel: {
         fontSize: 16,
         fontWeight: 'bold',
-        marginHorizontal: 25, 
+        marginHorizontal: 25,
+        color: colors.text,
     },
     picker: {
         marginBottom: 20,
@@ -165,7 +186,7 @@ const createStyles = (colors) => StyleSheet.create({
         marginTop: 15,
         alignSelf: 'center',
         borderRadius: 10,
-        backgroundColor: colors.dropdownBackground,
+        backgroundColor: '#e0e0eb',
     },
 
     dropdownContainer: {
@@ -198,7 +219,7 @@ const createStyles = (colors) => StyleSheet.create({
         borderWidth: 2,
         borderColor: colors.borderColor,
         borderRadius: 30,
-        backgroundColor: colors.buttonBackground,
+        backgroundColor: colors.signOutButtonBackground,
     },
     setting_container: {
         flex: 1,
@@ -233,6 +254,12 @@ const createStyles = (colors) => StyleSheet.create({
         justifyContent: 'flex-end',
         alignItems: 'center',
         marginBottom: 30, 
+    },
+    optionContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: 10,
     },
 });
 

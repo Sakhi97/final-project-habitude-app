@@ -3,7 +3,7 @@ import { View, Text } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { getDatabase, ref, onValue } from 'firebase/database';
 import { getAuth } from 'firebase/auth';
-import { Calendar } from 'react-native-calendars';
+import { Calendar} from 'react-native-calendars';
 import { ProgressChart } from 'react-native-chart-kit';
 import { ThemeContext } from '../styling/ThemeContext';
 import { lightThemeStyles, darkThemeStyles } from '../styling/styles';
@@ -29,7 +29,6 @@ export default function CalendarScreen() {
     }, [auth.currentUser.uid]);
 
     useEffect(() => {
-        // Map your habits to the format expected by DropDownPicker
         setItems(
           Object.keys(habits).map(habitKey => ({
             label: habits[habitKey].habit,
@@ -69,9 +68,9 @@ export default function CalendarScreen() {
     }, [habits]);
     
     const chartConfig = {
-        backgroundGradientFrom: "#f4f4f4",  // Match container background
-        backgroundGradientTo: "#f4f4f4",    // Match container background
-        color: (opacity = 6) => `rgba(134, 65, 244, ${opacity})`,
+        backgroundGradientFrom: theme === 'dark' ? '#303030' : '#f4f4f4', 
+        backgroundGradientTo: theme === 'dark' ? '#303030' : '#f4f4f4',  
+        color: (opacity = 1) => `rgba(255, 102, 51, ${opacity})`,
     };
 
     

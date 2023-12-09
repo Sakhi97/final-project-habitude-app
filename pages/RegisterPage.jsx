@@ -23,56 +23,77 @@ export default function RegisterPage({ navigation }) {
         }
         
         createUserWithEmailAndPassword(auth, email, password)
-.then((userCredential) => {
+        .then((userCredential) => {
     // Successfully registered
-    const user = userCredential.user;
-    console.log('User registered:', user);
+        const user = userCredential.user;
+        console.log('User registered:', user);
 
     // Update the displayName to "No name"
-    updateProfile(user, {
-        displayName: "No name"
-    }).then(() => {
-        // Update successful
-        // You may also want to set the "No name" displayName in your database
-        const db = getDatabase();
-        set(ref(db, 'users/' + user.uid), {
-            email: email,
-            displayName: "No name" // Set the default name here
+        updateProfile(user, {
+            displayName: "No name"
+        }).then(() => {
+            // Update successful
+            // You may also want to set the "No name" displayName in your database
+            const db = getDatabase();
+            set(ref(db, 'users/' + user.uid), {
+                email: email,
+                displayName: "No name" // Set the default name here
+            });
+        }).catch((error) => {
+            // An error occurred
+            console.log('Error updating profile:', error);
         });
-    }).catch((error) => {
-        // An error occurred
-        console.log('Error updating profile:', error);
-    });
 
     navigation.navigate('LoginPage');
-})
-.catch((error) => {
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    console.log('Error:', errorCode, errorMessage);
-    Alert.alert('Error', errorMessage);
-});
-};
+    })
+    .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log('Error:', errorCode, errorMessage);
+        Alert.alert('Error', errorMessage);
+    });
+    };
 
     return (
         <View style={styles.container}>
             <Input
                 placeholder='Email'
-                leftIcon={{ type: 'material', name: 'email' }}
+                leftIcon={{ 
+                    type: 'material', 
+                    name: 'email',
+                    color: theme === 'dark' ? 'white' : 'black'
+                }}
+                inputStyle={{
+                    color: theme === 'dark' ? 'white' : 'black'
+                }}
                 value={email}
                 onChangeText={setEmail}
                 autoCapitalize='none' 
             />
             <Input
                 placeholder='Password'
-                leftIcon={{ type: 'material', name: 'lock' }}
+                leftIcon={{ 
+                    type: 'material', 
+                    name: 'lock',
+                    color: theme === 'dark' ? 'white' : 'black'
+                }}
+                inputStyle={{
+                    color: theme === 'dark' ? 'white' : 'black'
+                }}
                 secureTextEntry={true}
                 value={password}
                 onChangeText={setPassword}
             />
             <Input
                 placeholder='Confirm Password'
-                leftIcon={{ type: 'material', name: 'lock-outline' }}
+                leftIcon={{ 
+                    type: 'material', 
+                    name: 'lock-outline',
+                    color: theme === 'dark' ? 'white' : 'black' 
+                }}
+                inputStyle={{
+                    color: theme === 'dark' ? 'white' : 'black'
+                }}
                 secureTextEntry={true}
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}

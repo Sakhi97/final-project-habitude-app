@@ -18,23 +18,34 @@ export default function HomeScreen() {
     const [habits, setHabits] = useState([]);
     const [selectedHabitIndex, setSelectedHabitIndex] = useState(null);
     const [selectedDate, setSelectedDate] = useState(todayStr);
+    const { showQuote } = useContext(ThemeContext);
+    const { setShowQuote } = useContext(ThemeContext);
+
 
     const handleDayPress = (date) => {
         const newDateStr = date.format('YYYY-MM-DD');
         console.log('selected day', newDateStr);
         setSelectedDate(newDateStr);
     };
-    
-    
 
     useEffect(() => {
         const requestNotificationsPermission = async () => {
             const { status } = await Notifications.requestPermissionsAsync();
             await AsyncStorage.setItem('hasNotificationPermission', status === 'granted' ? 'true' : 'false');
         };
-    
         requestNotificationsPermission();
+        const getShowQuoteSetting = async () => {
+            const savedShowQuote = await AsyncStorage.getItem('showQuote');
+            if (savedShowQuote !== null) {
+                setShowQuote(JSON.parse(savedShowQuote));
+            }
+        };
+    
+        getShowQuoteSetting();
+    }, []);
+    
 
+    useEffect(() => {
         const db = getDatabase();
         const habitsRef = ref(db, `habits/${auth.currentUser.uid}`);
         onValue(habitsRef, (snapshot) => {
@@ -136,32 +147,30 @@ export default function HomeScreen() {
                 <CalendarStrip
                     onDateSelected={handleDayPress}
                     scrollable
-                    style={{ 
-                        height: 100, 
-                        paddingTop: 20, 
-                        paddingBottom: 10,
-                        backgroundColor: '#f4f4f4' 
-                    }}
+                    style={styles.stripeCalendarStyle}
+                    iconLeftStyle= {{tintColor: theme === 'dark' ? 'white' : 'black'}}
+                    iconRightStyle={{tintColor: theme === 'dark' ? 'white' : 'black'}}
                     calendarColor={'white'}
-                    calendarHeaderStyle={{ color: 'black' }}
-                    dateNumberStyle={{ color: 'black' }}
-                    dateNameStyle={{ color: 'black' }}
+                    calendarHeaderStyle={{color: theme === 'dark' ? 'white' : 'black'}}
+                    dateNumberStyle={{color: theme === 'dark' ? 'white' : 'black'}}
+                    dateNameStyle={{color: theme === 'dark' ? 'white' : 'black'}}
                     highlightDateNumberStyle={{ color: '#808080' }}
                     highlightDateNameStyle={{ color: '#808080' }}
                     disabledDateNameStyle={{ color: 'grey' }}
                     disabledDateNumberStyle={{ color: 'grey' }}
                     iconContainer={{ flex: 0.1 }}
                 />
-                <QuoteCard />
-                <Text style={{ padding: 10, fontSize: 18, fontWeight: 'bold', alignSelf: 'center'}}>
+                {showQuote && <QuoteCard />}
+                <Text style={styles.dateText}>
                     Habits for {formatDateForDisplay(selectedDate)}
                 </Text>
                 {habits.map((habit, index) => (
                     <TouchableWithoutFeedback key={habit.key} onPress={() => handleHabitPress(index)}>
                         <Card
                             containerStyle={{
-                                backgroundColor: habit.done ? 'green' : 'white',
-                                borderRadius: 20, 
+                                backgroundColor: habit.done ? 'green' : '#e0e0eb',
+                                borderRadius: 20,
+                                borderColor: 'grey',
                                 width: '95%', 
                                 alignSelf: 'center', 
                             }}
@@ -172,17 +181,19 @@ export default function HomeScreen() {
                             >Habit: {habit.habit}</Card.Title>
                             {index === selectedHabitIndex && (
                                 <>
-                                    <Card.Divider />
+                                    <Card.Divider color='black'/>
                                     <Text style={{color: habit.done ? 'white' : 'black', fontWeight: 'bold' }}>Description: {habit.description}</Text>
                                     <Text style={{color: habit.done ? 'white' : 'black', fontWeight: 'bold' }}>Streak: {habit.streak || 0} days</Text>
                                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
-                                        <Button 
+                                        <Button
+                                            buttonStyle ={{backgroundColor: '#339900'}}
                                             icon={<Icon name={habit.done ? "close" : "check"} color={habit.done ? 'red' : 'blue'} />}
                                             onPress={() => handleMarkDone(index)}
                                             title={habit.done ? "Mark Undone" : "Mark Done"}
                                         />
                                         <Button 
-                                            icon={<Icon name="delete" />}
+                                            buttonStyle ={{backgroundColor: '#909090'}}
+                                            icon={<Icon name="delete" color='#980000'/>}
                                             onPress={() => handleDeleteHabit(habit.key)}
                                             title="Delete"
                                         />

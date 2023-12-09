@@ -101,6 +101,7 @@ export default function AddHabitScreen({ navigation }) {
                     value={startDate}
                     mode='date'
                     display='default'
+                    themeVariant= {theme}
                     onChange={(event, date) => setStartDate(date)}
                     style={styles.datePicker}
                 />
@@ -109,6 +110,7 @@ export default function AddHabitScreen({ navigation }) {
                     value={endDate}
                     mode='date'
                     display='default'
+                    themeVariant= {theme}
                     onChange={(event, date) => setEndDate(date)}
                     style={styles.datePicker}
                 />

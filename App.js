@@ -6,7 +6,7 @@ import { ThemeProvider } from './styling/ThemeContext';
 export default function App() {
     return (
         <ThemeProvider>
-            <AppNavigator />
+            <AppNavigator/>
         </ThemeProvider>
     );
 }

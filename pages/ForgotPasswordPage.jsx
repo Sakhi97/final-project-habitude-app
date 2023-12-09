@@ -28,7 +28,14 @@ export default function ForgotPasswordPage({ navigation }) {
         <View style={styles.container}>
             <Input
                 placeholder='Email'
-                leftIcon={{ type: 'material', name: 'email' }}
+                leftIcon={{ 
+                    type: 'material', 
+                    name: 'email',
+                    color: theme === 'dark' ? 'white' : 'black' 
+                }}
+                inputStyle={{
+                    color: theme === 'dark' ? 'white' : 'black'
+                }}
                 value={email}
                 onChangeText={setEmail}
             />

@@ -16,6 +16,8 @@ export default function ForumScreen() {
     const [searchQuery, setSearchQuery] = useState('');
     const [showAddPost, setShowAddPost] = useState(false);
     const [refreshStoriesTrigger, setRefreshStoriesTrigger] = useState(false);
+    const [userLikes, setUserLikes] = useState({}); // This should ideally be fetched from the database
+
 
 
     useEffect(() => {
@@ -38,12 +40,9 @@ export default function ForumScreen() {
         const storiesRef = ref(db, 'stories');
         onValue(storiesRef, (snapshot) => {
             const data = snapshot.val() || {};
-            const formattedData = Object.entries(data).map(([key, value]) => {
-                return {
-                    key,
-                    ...value
-                };
-            });
+            const formattedData = Object.entries(data)
+                .map(([key, value]) => ({ key, ...value }))
+                .sort((a, b) => b.likes - a.likes); // Sort stories by likes in descending order
             setStories(formattedData);
         });
     };
@@ -84,38 +83,27 @@ export default function ForumScreen() {
         const db = getDatabase();
         const likesRef = ref(db, `stories/${storyKey}/likes`);
         get(likesRef).then((snapshot) => {
-            const currentLikes = snapshot.val() || 0;
-            const newLikes = currentLikes + 1;
+            let currentLikes = snapshot.val() || 0;
+            let updatedUserLikes = { ...userLikes };
     
-            // Correct usage of update
-            update(ref(db, `stories/${storyKey}`), { likes: newLikes })
-            .then(() => {
-                console.log('Like updated successfully.');
-            })
-            .catch((error) => {
-                console.error('Error updating likes: ', error);
-            });
+            if (updatedUserLikes[storyKey]) {
+                // User has already liked this story, so unlike it
+                currentLikes = currentLikes > 0 ? currentLikes - 1 : 0;
+                updatedUserLikes[storyKey] = false;
+            } else {
+                // User has not liked this story, so add a like
+                currentLikes = currentLikes + 1;
+                updatedUserLikes[storyKey] = true;
+            }
+    
+            // Update the likes in Firebase
+            update(ref(db, `stories/${storyKey}`), { likes: currentLikes });
+    
+            // Update the local state
+            setUserLikes(updatedUserLikes);
         });
     };
     
-    
-    const handleDislike = (storyKey) => {
-        const db = getDatabase();
-        const dislikesRef = ref(db, `stories/${storyKey}/dislikes`);
-        get(dislikesRef).then((snapshot) => {
-            const currentDislikes = snapshot.val() || 0;
-            const newDislikes = currentDislikes + 1;
-    
-            // Correct usage of update
-            update(ref(db, `stories/${storyKey}`), { dislikes: newDislikes })
-            .then(() => {
-                console.log('Dislike updated successfully.');
-            })
-            .catch((error) => {
-                console.error('Error updating dislikes: ', error);
-            });
-        });
-    };
     
     
     
@@ -174,9 +162,15 @@ export default function ForumScreen() {
                 keyExtractor={(item, index) => 'story-' + index}
                 renderItem={({ item }) => (
                     <TouchableOpacity onPress={() => handleExpandStory(item.key)}>
-                        <Card>
+                        <Card containerStyle={{
+                            backgroundColor: '#e0e0eb',
+                            borderRadius: 20,
+                            borderColor: 'grey',
+                            width: '95%', 
+                            alignSelf: 'center', 
+                        }}>
                             <Card.Title>{item.headline}</Card.Title>
-                            <Card.Divider />
+                            <Card.Divider color='black'/>
                             {renderStoryText(item)}
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
                                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -186,16 +180,7 @@ export default function ForumScreen() {
                                         type='entypo'
                                         onPress={() => handleLike(item.key)} // Make sure 'item.key' is the correct reference to the story's key in Firebase
                                     />
-                                    <Text style={{ marginLeft: 5 }}>{item.likes || 0}</Text>
-                                </View>
-                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                    <Icon
-                                        name='thumbs-down'
-                                        type='entypo'
-                                        onPress={() => handleDislike(item.key)}
-
-                                    />
-                                    <Text style={{ marginLeft: 5 }}>{item.dislikes || 0}</Text>
+                                    <Text style={{ marginLeft: 5}}>{item.likes || 0}</Text>
                                 </View>
                             </View>
                         </Card>

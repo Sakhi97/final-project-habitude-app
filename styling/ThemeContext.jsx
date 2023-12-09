@@ -23,8 +23,20 @@ export const ThemeProvider = ({ children }) => {
         await AsyncStorage.setItem('theme', newTheme);
     };
 
+    const [showQuote, setShowQuote] = useState(true);
+
+    useEffect(() => {
+        const getShowQuoteSetting = async () => {
+            const savedShowQuote = await AsyncStorage.getItem('showQuote');
+            if (savedShowQuote !== null) {
+                setShowQuote(JSON.parse(savedShowQuote));
+            }
+        };
+        getShowQuoteSetting();
+    }, []);
+
     return (
-        <ThemeContext.Provider value={{ theme, toggleTheme }}>
+        <ThemeContext.Provider value={{ theme, toggleTheme, showQuote, setShowQuote }}>
         {children}
         </ThemeContext.Provider>
     );
