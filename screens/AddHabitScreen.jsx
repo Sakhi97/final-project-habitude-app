@@ -2,15 +2,13 @@ import React, { useState, useContext } from 'react';
 import { View, Text, Switch} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { getDatabase, ref, set } from 'firebase/database';
-import { getAuth } from 'firebase/auth';
+import { ref, set } from 'firebase/database';
 import { Button, Input } from 'react-native-elements';
 import { ThemeContext } from '../styling/ThemeContext';
 import { lightThemeStyles, darkThemeStyles } from '../styling/styles';
+import { db, auth} from '../configs/firebaseConfig';
 
 export default function AddHabitScreen({ navigation }) {
-    const db = getDatabase();
-    const auth = getAuth();
     const { theme } = useContext(ThemeContext);
     const styles = theme === 'dark' ? darkThemeStyles : lightThemeStyles;
     const [habit, setHabit] = useState('');

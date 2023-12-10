@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, TouchableOpacity, Alert, Switch } from 'react-native';
 import { Button, Input, Image } from 'react-native-elements';
-import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { getAuth, updateProfile, signOut } from 'firebase/auth';
-import { getDatabase, ref, set } from 'firebase/database';
+import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { updateProfile, signOut } from 'firebase/auth';
+import { ref, set } from 'firebase/database';
 import OptionRow from '../components/settings/OptionRow';
 import Icon from 'react-native-vector-icons/FontAwesome'; 
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -13,14 +13,11 @@ import { ThemeContext } from '../styling/ThemeContext';
 import { lightThemeStyles, darkThemeStyles } from '../styling/styles';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
-import { storage } from '../configs/firebaseConfig';
+import { storage, db, auth} from '../configs/firebaseConfig';
 
 
 
 export default function SettingScreen() {
-    const db = getDatabase();
-    const auth = getAuth();
-    const storage = getStorage();
     const user = auth.currentUser;
     const { theme } = useContext(ThemeContext);
     const { showQuote } = useContext(ThemeContext);
@@ -252,6 +249,5 @@ export default function SettingScreen() {
         </View>
     );
 };
-
 
 

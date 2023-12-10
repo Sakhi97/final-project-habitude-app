@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useContext} from 'react'; 
 import { View, Text, TouchableWithoutFeedback  } from 'react-native';
-import { getDatabase, ref, onValue, remove,update } from 'firebase/database';
-import { getAuth } from 'firebase/auth';
+import { ref, onValue, remove,update } from 'firebase/database';
 import CalendarStrip from 'react-native-calendar-strip';
 import QuoteCard from '../components/home/QuoteCard';
 import HabitItem from '../components/home/HabitItem';
@@ -9,10 +8,9 @@ import { useNotificationPermission } from '../hooks/useNotificationPermission'
 import { useShowQuoteSetting } from '../hooks/useShowQuoteSetting'
 import { ThemeContext } from '../styling/ThemeContext';
 import { lightThemeStyles, darkThemeStyles } from '../styling/styles';
+import { db, auth} from '../configs/firebaseConfig';
 
 export default function HomeScreen() {
-    const db = getDatabase();
-    const auth = getAuth();
     const { theme } = useContext(ThemeContext);
     const styles = theme === 'dark' ? darkThemeStyles : lightThemeStyles;
     const todayStr = new Date().toISOString().split('T')[0];
@@ -113,7 +111,6 @@ export default function HomeScreen() {
             console.error('Error updating habit: ', error);
         });
     };
-   
 
     return (
         <TouchableWithoutFeedback onPress={() => setSelectedHabitIndex(null)}>

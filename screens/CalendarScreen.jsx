@@ -1,15 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { View, Text } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { getDatabase, ref, onValue } from 'firebase/database';
-import { getAuth } from 'firebase/auth';
+import { ref, onValue } from 'firebase/database';
 import { Calendar} from 'react-native-calendars';
 import { ProgressChart } from 'react-native-chart-kit';
 import { ThemeContext } from '../styling/ThemeContext';
 import { lightThemeStyles, darkThemeStyles } from '../styling/styles';
+import { db, auth} from '../configs/firebaseConfig';
 
 export default function CalendarScreen() {
-    const auth = getAuth();
     const { theme } = useContext(ThemeContext);
     const styles = theme === 'dark' ? darkThemeStyles : lightThemeStyles;
     const [habits, setHabits] = useState({});
@@ -20,7 +19,6 @@ export default function CalendarScreen() {
     const [items, setItems] = useState([]);
 
     useEffect(() => {
-        const db = getDatabase();
         const habitsRef = ref(db, 'habits/' + auth.currentUser.uid);
         onValue(habitsRef, (snapshot) => {
             const data = snapshot.val();

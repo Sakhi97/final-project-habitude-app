@@ -5,9 +5,9 @@ import { getDatabase, ref, push, onValue, update, get } from 'firebase/database'
 import { ThemeContext } from '../styling/ThemeContext';
 import { lightThemeStyles, darkThemeStyles } from '../styling/styles';
 import StoryItem from '../components/forum/StoryItem';
+import { db } from '../configs/firebaseConfig';
 
 export default function ForumScreen() {
-    const db = getDatabase();
     const { theme } = useContext(ThemeContext);
     const styles = theme === 'dark' ? darkThemeStyles : lightThemeStyles;
     const [stories, setStories] = useState([]);
