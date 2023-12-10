@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, TouchableOpacity, Alert, Switch } from 'react-native';
+import { View, Text, TouchableOpacity, Alert } from 'react-native';
 import { Button, Input, Image } from 'react-native-elements';
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { updateProfile, signOut } from 'firebase/auth';
@@ -31,8 +31,6 @@ export default function SettingScreen() {
     const [isDarkMode, setIsDarkMode] = useState(false); 
     const [notificationsEnabled, setNotificationsEnabled] = useState(true);
     const [image, setImage] = useState(null)
-    const [currentAvatarRef, setCurrentAvatarRef] = useState(user?.photoURL || '');
-
 
 
     useEffect(() => {

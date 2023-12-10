@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext} from 'react';
 import { View, FlatList, Text} from 'react-native';
 import { Button, Input } from 'react-native-elements';
-import { getDatabase, ref, push, onValue, update, get } from 'firebase/database';
+import { ref, push, onValue, update, get } from 'firebase/database';
 import { ThemeContext } from '../styling/ThemeContext';
 import { lightThemeStyles, darkThemeStyles } from '../styling/styles';
 import StoryItem from '../components/forum/StoryItem';
