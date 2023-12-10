@@ -99,7 +99,7 @@ export default function CalendarScreen() {
 
 
     const data = {
-        data: [getCompletionPercentage(selectedHabit) / 100], // the library expects a value between 0 and 1
+        data: [getCompletionPercentage(selectedHabit) / 100], 
     };
 
    
@@ -134,8 +134,8 @@ export default function CalendarScreen() {
                 </Text>
                 <ProgressChart
                   data={data}
-                  width={200} // Adjust the size accordingly
-                  height={200} // Adjust the size accordingly
+                  width={200} 
+                  height={200} 
                   strokeWidth={16}
                   radius={32}
                   chartConfig={chartConfig}

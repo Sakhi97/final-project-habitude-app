@@ -9,6 +9,8 @@ import { ThemeContext } from '../styling/ThemeContext';
 import { lightThemeStyles, darkThemeStyles } from '../styling/styles';
 
 export default function AddHabitScreen({ navigation }) {
+    const db = getDatabase();
+    const auth = getAuth();
     const { theme } = useContext(ThemeContext);
     const styles = theme === 'dark' ? darkThemeStyles : lightThemeStyles;
     const [habit, setHabit] = useState('');
@@ -25,7 +27,6 @@ export default function AddHabitScreen({ navigation }) {
         { label: 'Monthly', value: 'monthly' }
     ]);
 
-    const auth = getAuth();
 
     const handleAddHabit = () => {
         let computedStartDate = new Date(startDate);
@@ -58,7 +59,6 @@ export default function AddHabitScreen({ navigation }) {
             }
         }
 
-        const db = getDatabase();
         const habitRef = ref(db, 'habits/' + auth.currentUser.uid + '/' + habit);
         set(habitRef, {
             habit,

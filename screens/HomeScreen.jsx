@@ -1,19 +1,20 @@
 import React, { useEffect, useState, useContext} from 'react'; 
 import { View, Text, TouchableWithoutFeedback  } from 'react-native';
-import { Icon, Button, Card } from 'react-native-elements';
 import { getDatabase, ref, onValue, remove,update } from 'firebase/database';
 import { getAuth } from 'firebase/auth';
 import CalendarStrip from 'react-native-calendar-strip';
-import * as Notifications from 'expo-notifications';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import QuoteCard from '../components/home/QuoteCard';
+import HabitItem from '../components/home/HabitItem';
+import { useNotificationPermission } from '../hooks/useNotificationPermission'
+import { useShowQuoteSetting } from '../hooks/useShowQuoteSetting'
 import { ThemeContext } from '../styling/ThemeContext';
 import { lightThemeStyles, darkThemeStyles } from '../styling/styles';
 
 export default function HomeScreen() {
+    const db = getDatabase();
+    const auth = getAuth();
     const { theme } = useContext(ThemeContext);
     const styles = theme === 'dark' ? darkThemeStyles : lightThemeStyles;
-    const auth = getAuth();
     const todayStr = new Date().toISOString().split('T')[0];
     const [habits, setHabits] = useState([]);
     const [selectedHabitIndex, setSelectedHabitIndex] = useState(null);
@@ -21,32 +22,16 @@ export default function HomeScreen() {
     const { showQuote } = useContext(ThemeContext);
     const { setShowQuote } = useContext(ThemeContext);
 
+    useNotificationPermission();
+    useShowQuoteSetting();
 
     const handleDayPress = (date) => {
         const newDateStr = date.format('YYYY-MM-DD');
         console.log('selected day', newDateStr);
         setSelectedDate(newDateStr);
     };
-
-    useEffect(() => {
-        const requestNotificationsPermission = async () => {
-            const { status } = await Notifications.requestPermissionsAsync();
-            await AsyncStorage.setItem('hasNotificationPermission', status === 'granted' ? 'true' : 'false');
-        };
-        requestNotificationsPermission();
-        const getShowQuoteSetting = async () => {
-            const savedShowQuote = await AsyncStorage.getItem('showQuote');
-            if (savedShowQuote !== null) {
-                setShowQuote(JSON.parse(savedShowQuote));
-            }
-        };
     
-        getShowQuoteSetting();
-    }, []);
-    
-
     useEffect(() => {
-        const db = getDatabase();
         const habitsRef = ref(db, `habits/${auth.currentUser.uid}`);
         onValue(habitsRef, (snapshot) => {
             const data = snapshot.val() || {};
@@ -56,7 +41,6 @@ export default function HomeScreen() {
                 const endDate = new Date(habit.endDate);
                 const selectedDateObj = new Date(selectedDate);
 
-            // Check if the selected date falls within the habit's date range
                 if (selectedDateObj >= startDate && selectedDateObj <= endDate) {
                     return {
                         key,
@@ -78,13 +62,13 @@ export default function HomeScreen() {
         return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
     };
 
+    
     const handleHabitPress = (index) => {
-        setSelectedHabitIndex(index);
+        setSelectedHabitIndex(selectedHabitIndex === index ? null : index);
     };
 
-
+    
     const handleDeleteHabit = (habitKey) => {
-        const db = getDatabase();
         const habitRef = ref(db, 'habits/' + auth.currentUser.uid + '/' + habitKey);
         remove(habitRef).then(() => {
             console.log('Habit removed from the database.');
@@ -101,30 +85,23 @@ export default function HomeScreen() {
         const updates = {};
         const newDoneStatus = !habitToUpdate.done;
         
-        // Increment or decrement the streak based on the new done status
         const newStreak = newDoneStatus ? (habitToUpdate.streak || 0) + 1 : habitToUpdate.streak - 1;
         updates['/habits/' + auth.currentUser.uid + '/' + habitToUpdate.key + '/done'] = newDoneStatus;
         updates['/habits/' + auth.currentUser.uid + '/' + habitToUpdate.key + '/streak'] = newStreak;
     
-        // Get the current date string
         const todayStr = new Date().toISOString().split('T')[0];
-    
-        // Use selectedDate instead of today's date
+
         const completionsPath = `/habits/${auth.currentUser.uid}/${habitToUpdate.key}/completions/${selectedDate}`;
     
         if (newDoneStatus) {
-            // If marking as done, add a new completion
             updates[completionsPath] = { timestamp: new Date().toISOString() };
         } else {
-            // If marking as undone, remove the completion
             updates[completionsPath] = null;
         }
-    
-        const db = getDatabase();
+
         update(ref(db), updates)
         .then(() => {
             console.log('Habit updated successfully.');
-            // Update local state if necessary
             setHabits(prevHabits => {
                 const updatedHabits = [...prevHabits];
                 updatedHabits[index].done = newDoneStatus;
@@ -136,10 +113,7 @@ export default function HomeScreen() {
             console.error('Error updating habit: ', error);
         });
     };
-    console.log("Current theme:", theme);
    
-
- 
 
     return (
         <TouchableWithoutFeedback onPress={() => setSelectedHabitIndex(null)}>
@@ -165,44 +139,15 @@ export default function HomeScreen() {
                     Habits for {formatDateForDisplay(selectedDate)}
                 </Text>
                 {habits.map((habit, index) => (
-                    <TouchableWithoutFeedback key={habit.key} onPress={() => handleHabitPress(index)}>
-                        <Card
-                            containerStyle={{
-                                backgroundColor: habit.done ? 'green' : '#e0e0eb',
-                                borderRadius: 20,
-                                borderColor: 'grey',
-                                width: '95%', 
-                                alignSelf: 'center', 
-                            }}
-                                >
-                            <Card.Title style={{ 
-                                    color: habit.done ? 'white' : 'black', 
-                                }}
-                            >Habit: {habit.habit}</Card.Title>
-                            {index === selectedHabitIndex && (
-                                <>
-                                    <Card.Divider color='black'/>
-                                    <Text style={{color: habit.done ? 'white' : 'black', fontWeight: 'bold' }}>Description: {habit.description}</Text>
-                                    <Text style={{color: habit.done ? 'white' : 'black', fontWeight: 'bold' }}>Streak: {habit.streak || 0} days</Text>
-                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
-                                        <Button
-                                            buttonStyle ={{backgroundColor: '#339900'}}
-                                            icon={<Icon name={habit.done ? "close" : "check"} color={habit.done ? 'red' : 'blue'} />}
-                                            onPress={() => handleMarkDone(index)}
-                                            title={habit.done ? "Mark Undone" : "Mark Done"}
-                                        />
-                                        <Button 
-                                            buttonStyle ={{backgroundColor: '#909090'}}
-                                            icon={<Icon name="delete" color='#980000'/>}
-                                            onPress={() => handleDeleteHabit(habit.key)}
-                                            title="Delete"
-                                        />
-                                    </View>
-                                </>
-                            )}
-                        </Card>
-                    </TouchableWithoutFeedback>
-                ))}
+                    <HabitItem 
+                    key={habit.key}
+                    habit={habit}
+                    onHabitPress={() => handleHabitPress(index)}
+                    onToggleDone={() => handleMarkDone(index)}
+                    onDelete={() => handleDeleteHabit(habit.key)}
+                    isSelected={index === selectedHabitIndex}
+                />
+            ))}
             </View>
         </TouchableWithoutFeedback>
     );

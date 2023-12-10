@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useContext} from 'react';
-import { View, FlatList, Text, TouchableOpacity } from 'react-native';
-import { Button, Card, Icon, Input } from 'react-native-elements';
+import { View, FlatList, Text} from 'react-native';
+import { Button, Input } from 'react-native-elements';
 import { getDatabase, ref, push, onValue, update, get } from 'firebase/database';
 import { ThemeContext } from '../styling/ThemeContext';
 import { lightThemeStyles, darkThemeStyles } from '../styling/styles';
+import StoryItem from '../components/forum/StoryItem';
 
 export default function ForumScreen() {
+    const db = getDatabase();
     const { theme } = useContext(ThemeContext);
     const styles = theme === 'dark' ? darkThemeStyles : lightThemeStyles;
     const [stories, setStories] = useState([]);
@@ -16,9 +18,7 @@ export default function ForumScreen() {
     const [searchQuery, setSearchQuery] = useState('');
     const [showAddPost, setShowAddPost] = useState(false);
     const [refreshStoriesTrigger, setRefreshStoriesTrigger] = useState(false);
-    const [userLikes, setUserLikes] = useState({}); // This should ideally be fetched from the database
-
-
+    const [userLikes, setUserLikes] = useState({}); 
 
     useEffect(() => {
         fetchStories();
@@ -36,13 +36,12 @@ export default function ForumScreen() {
     
 
     const fetchStories = () => {
-        const db = getDatabase();
         const storiesRef = ref(db, 'stories');
         onValue(storiesRef, (snapshot) => {
             const data = snapshot.val() || {};
             const formattedData = Object.entries(data)
                 .map(([key, value]) => ({ key, ...value }))
-                .sort((a, b) => b.likes - a.likes); // Sort stories by likes in descending order
+                .sort((a, b) => b.likes - a.likes);
             setStories(formattedData);
         });
     };
@@ -52,20 +51,8 @@ export default function ForumScreen() {
         setExpandedStoryId(expandedStoryId === storyKey ? null : storyKey);
     };
 
-    const renderStoryText = (item) => {
-        const isExpanded = expandedStoryId === item.key;
-        const text = item.text || '';
-        const shouldTruncate = text.length > 50 && !isExpanded;
-
-        return (
-            <Text>
-                {shouldTruncate ? text.substring(0, 50) + '...' : text}
-            </Text>
-        );
-    };
 
     const handlePostStory = () => {
-        const db = getDatabase();
         const storiesRef = ref(db, 'stories');
         push(storiesRef, {
             headline: newHeadline,
@@ -80,26 +67,21 @@ export default function ForumScreen() {
     };
 
     const handleLike = (storyKey) => {
-        const db = getDatabase();
         const likesRef = ref(db, `stories/${storyKey}/likes`);
         get(likesRef).then((snapshot) => {
             let currentLikes = snapshot.val() || 0;
             let updatedUserLikes = { ...userLikes };
     
             if (updatedUserLikes[storyKey]) {
-                // User has already liked this story, so unlike it
                 currentLikes = currentLikes > 0 ? currentLikes - 1 : 0;
                 updatedUserLikes[storyKey] = false;
             } else {
-                // User has not liked this story, so add a like
                 currentLikes = currentLikes + 1;
                 updatedUserLikes[storyKey] = true;
             }
     
-            // Update the likes in Firebase
             update(ref(db, `stories/${storyKey}`), { likes: currentLikes });
     
-            // Update the local state
             setUserLikes(updatedUserLikes);
         });
     };
@@ -158,33 +140,15 @@ export default function ForumScreen() {
             )}
 
             <FlatList
-                data={Object.values(filteredStories)} // Convert stories object to an array for rendering
+                data={Object.values(filteredStories)} 
                 keyExtractor={(item, index) => 'story-' + index}
                 renderItem={({ item }) => (
-                    <TouchableOpacity onPress={() => handleExpandStory(item.key)}>
-                        <Card containerStyle={{
-                            backgroundColor: '#e0e0eb',
-                            borderRadius: 20,
-                            borderColor: 'grey',
-                            width: '95%', 
-                            alignSelf: 'center', 
-                        }}>
-                            <Card.Title>{item.headline}</Card.Title>
-                            <Card.Divider color='black'/>
-                            {renderStoryText(item)}
-                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
-                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                    
-                                    <Icon
-                                        name='thumbs-up'
-                                        type='entypo'
-                                        onPress={() => handleLike(item.key)} // Make sure 'item.key' is the correct reference to the story's key in Firebase
-                                    />
-                                    <Text style={{ marginLeft: 5}}>{item.likes || 0}</Text>
-                                </View>
-                            </View>
-                        </Card>
-                    </TouchableOpacity>
+                    <StoryItem 
+                        item={item} 
+                        onExpand={() => handleExpandStory(item.key)}
+                        onLike={() => handleLike(item.key)}
+                        isExpanded={item.key === expandedStoryId}
+                    />          
                 )}
             />
         </View>

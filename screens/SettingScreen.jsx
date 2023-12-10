@@ -4,6 +4,7 @@ import { Button, Input, Image } from 'react-native-elements';
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { getAuth, updateProfile, signOut } from 'firebase/auth';
 import { getDatabase, ref, set } from 'firebase/database';
+import OptionRow from '../components/settings/OptionRow';
 import Icon from 'react-native-vector-icons/FontAwesome'; 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { scheduleNotification, cancelAllNotifications } from '../services/notification';
@@ -17,6 +18,7 @@ import { storage } from '../configs/firebaseConfig';
 
 
 export default function SettingScreen() {
+    const db = getDatabase();
     const auth = getAuth();
     const storage = getStorage();
     const user = auth.currentUser;
@@ -31,7 +33,6 @@ export default function SettingScreen() {
     const [editedName, setEditedName] = useState(user?.displayName || 'No Name'); 
     const [isDarkMode, setIsDarkMode] = useState(false); 
     const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-    // Upload file to Firebase Storage
     const [image, setImage] = useState(null)
     const [currentAvatarRef, setCurrentAvatarRef] = useState(user?.photoURL || '');
 
@@ -52,7 +53,6 @@ export default function SettingScreen() {
     };
 
   
-    // Launch the image picker
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
           mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -67,7 +67,7 @@ export default function SettingScreen() {
             if (user) {
                 updateProfile(user, { photoURL: uploadURL })
                     .then(() => {
-                        setImage(uploadURL); // Update the image state to rerender the avatar
+                        setImage(uploadURL);
                         Alert.alert("Avatar Updated", "Your profile picture has been updated.");
                     })
                     .catch(error => {
@@ -78,14 +78,12 @@ export default function SettingScreen() {
         }
     };
       async function uploadImageAsync(uri) {
-        // Resize the image and convert it to PNG
         const manipulatedImage = await ImageManipulator.manipulateAsync(
             uri,
-            [{ resize: { width: 100, height: 100 } }], // Resize to avatar size
-            { format: ImageManipulator.SaveFormat.PNG } // Convert to PNG format
+            [{ resize: { width: 100, height: 100 } }],
+            { format: ImageManipulator.SaveFormat.PNG } 
         );
     
-        // Convert the manipulated image to blob
         const blob = await new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             xhr.onload = function () {
@@ -103,7 +101,6 @@ export default function SettingScreen() {
         const storageRef1 = storageRef(storage, `Images/avatar-${Date.now()}.png`); // Save as PNG
         const result = await uploadBytes(storageRef1, blob);
     
-        // We're done with the blob, close and release it
         blob.close();
     
         return await getDownloadURL(storageRef1);
@@ -137,7 +134,6 @@ export default function SettingScreen() {
             return;
         }
 
-        const db = getDatabase();
         updateProfile(user, { displayName: editedName.trim() }).then(() => {
             set(ref(db, 'users/' + user.uid), {
                 displayName: editedName.trim(),
@@ -165,22 +161,9 @@ export default function SettingScreen() {
             Alert.alert("Error", error.message);
         });
     };
-    const OptionRow = ({ label, onPress, hasSwitch = true, value, onToggle }) => (
-        <TouchableOpacity 
-            style={styles.optionContainer} 
-            onPress={hasSwitch ? () => onToggle(!value) : onPress} // Use onToggle if hasSwitch is true, otherwise use onPress
-        >
-            <Text style={{ fontWeight: 'bold', color: theme === 'dark' ? 'white' : 'black', flex: 1 }}>
-                {label}
-            </Text>
-            {hasSwitch && (
-                <Switch onValueChange={onToggle} value={value} />
-            )}
-        </TouchableOpacity>
-    );
     const toggleDarkMode = () => {
-        setIsDarkMode(previousState => !previousState)
-        toggleTheme(); 
+        setIsDarkMode(previousState => !previousState);
+        toggleTheme();
     };
 
     return (
@@ -227,24 +210,35 @@ export default function SettingScreen() {
             )}
 
             <OptionRow 
-                label="Dark Mode" 
-                value={isDarkMode} 
-                onToggle={toggleDarkMode } 
+                label="Dark Mode"
+                value={isDarkMode}
+                onToggle={toggleDarkMode}
+                hasSwitch={true}
+                theme={theme}
+                styles={styles}
             />
             <OptionRow 
-                label="Notification" 
-                value={notificationsEnabled} 
-                onToggle={handleNotificationSwitch} 
+                label="Notification"
+                value={notificationsEnabled}
+                onToggle={handleNotificationSwitch}
+                hasSwitch={true}
+                theme={theme}
+                styles={styles}
             />
             <OptionRow 
-                label="Daily Motivational Quote" 
-                value={showQuote} 
-                onToggle={handleQuoteSwitch} 
+                label="Daily Motivational Quote"
+                value={showQuote}
+                onToggle={handleQuoteSwitch}
+                hasSwitch={true}
+                theme={theme}
+                styles={styles}
             />
             <OptionRow 
-                label="Edit Account Details" 
+                label="Edit Account Details"
                 onPress={navigateToEditAccount}
-                hasSwitch={false} // No switch for this option
+                hasSwitch={false}
+                theme={theme}
+                styles={styles}
             />
             <View style={styles.signOutContainer}>
                 <Button 
