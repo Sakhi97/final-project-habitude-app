@@ -19,6 +19,8 @@ Habitude App is a mobile application developed as a final project for a mobile p
 
 ## Expo Features Used
 - **Push Notifications**: To engage users with timely and relevant updates.
+- **Image Manipulator**: to resize images uploaded images by the user.
+- **Image Picker**: to allow users to pick a photo from the device gallery.
 - **Expo SDK Libraries**: For accessing device features like camera, location, etc.
 
 ## Installation and Setup
