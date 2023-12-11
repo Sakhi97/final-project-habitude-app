@@ -24,27 +24,22 @@ export default function RegisterPage({ navigation }) {
         
         createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
-    // Successfully registered
         const user = userCredential.user;
         console.log('User registered:', user);
 
-    // Update the displayName to "No name"
         updateProfile(user, {
             displayName: "No name"
         }).then(() => {
-            // Update successful
-            // You may also want to set the "No name" displayName in your database
             const db = getDatabase();
             set(ref(db, 'users/' + user.uid), {
                 email: email,
-                displayName: "No name" // Set the default name here
+                displayName: "No name" 
             });
         }).catch((error) => {
-            // An error occurred
             console.log('Error updating profile:', error);
         });
 
-    navigation.navigate('LoginPage');
+    navigation.navigate('Login Page');
     })
     .catch((error) => {
         const errorCode = error.code;
