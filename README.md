@@ -14,13 +14,11 @@ Habitude App is a mobile application developed as a final project for a mobile p
 
 ## Libraries and Dependencies
 - **React Navigation**: Utilized for navigating between different screens in the app.
-- **Redux**: Employed for state management across the app.
 - **React Native Elements**: A library full of pre-built React Native components for a consistent UI.
 - **Other Libraries**: Various other libraries for UI elements, animations, and additional functionalities.
 
 ## Expo Features Used
 - **Push Notifications**: To engage users with timely and relevant updates.
-- **OTA Updates (Over-the-Air)**: For updating the app without needing to resubmit to app stores.
 - **Expo SDK Libraries**: For accessing device features like camera, location, etc.
 
 ## Installation and Setup
